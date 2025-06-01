@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>나에게 맞는 운동법</title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+  </head>
+<body>
+  <h1>나에게 맞는 운동법을 알아보세요</h1>
+  <div>
+    <img src="./image/exercise.png">
+  </div>
+  <form id="fortune-form">
+    <label for="age">나이</label>
+    <input type="number" id="age" name="age" required />
+
+    <label for="weight">몸무게</label>
+    <input type="number" id="weight" name="weight" required />
+
+    <label for="weather">오늘의 날씨</label>
+    <input type="text" id="weather" name="weather" required />
+
+    <button type="submit">나에게 맞는 운동법 확인하기</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById("exercise-form");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const age = document.getElementById("age").value;
+      const weight = document.getElementById("weight").value;
+      const weather = document.getElementById("weather").value;
+      
+      resultDiv.textContent = "나에게 맞는 운동법을 불러오는 중입니다...";
+
+      try {
+        const response = await fetch("https://assign2-beta.vercel.app/api/duksungAI", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ age, weight, weather }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.textContent = data.answer;
+        } else {
+          resultDiv.textContent = `오류: ${data.error}`;
+        }
+      } catch (err) {
+        resultDiv.textContent = "서버와 통신 중 오류가 발생했습니다.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
